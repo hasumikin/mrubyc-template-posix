@@ -1,5 +1,5 @@
 MRBC = mrbc
-CC = cc
+CC = gcc
 SRCDIR = mrblib
 OBJDIR = src
 MRUBYCSRCDIR = mrubyc_src
@@ -7,8 +7,8 @@ SRCFILES = $(wildcard $(SRCDIR)/**/*.rb $(SRCDIR)/*.rb)
 OBJS = $(subst $(SRCDIR),$(OBJDIR),$(patsubst %.rb,%.c,$(SRCFILES)))
 TARGET = main
 
-$(TARGET): $(OBJS)
-	$(CC) -DMRBC_DEBUG -o $@ $@.c $(MRUBYCSRCDIR)/*.c $(MRUBYCSRCDIR)/hal/*.c
+$(TARGET): $(OBJS) main.c
+	$(CC) -m32 -DMRBC_DEBUG -o $@ $@.c $(MRUBYCSRCDIR)/*.c $(MRUBYCSRCDIR)/hal/*.c
 
 $(OBJDIR)/%.c: $(SRCDIR)/%.rb
 	@if [ ! -d $(dir $@) ]; \
@@ -17,7 +17,6 @@ $(OBJDIR)/%.c: $(SRCDIR)/%.rb
 	$(MRBC) -E -B $(basename $(notdir $@)) -o $@ $<
 
 clean:
-	rm $(OBJDIR)/* ./$(TARGET)
-
-#.PHONY: $(OBJS)
+	rm -f $(TARGET)
+	rm -f $(OBJDIR)/**/*.c
 
